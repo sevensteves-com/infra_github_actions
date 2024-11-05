@@ -3,14 +3,14 @@
 # Load configuration variables
 source "$(dirname "$0")/config.sh"
 
-# Get the hostname of the machine
-RUNNER=$(hostname)
-
-# Ensure script runs with sudo privileges where necessary
-if [[ $EUID -ne 0 ]]; then
-    echo "Please run as root or with sudo privileges."
+# Ensure jq is installed for JSON parsing
+if ! command -v jq &> /dev/null; then
+    echo "jq is required but not installed. Please install jq and try again."
     exit 1
 fi
+
+# Get the hostname of the machine
+RUNNER=$(hostname)
 
 # Create actions-runner directory
 mkdir -p $RUNNER_DIR
@@ -34,11 +34,13 @@ if [[ -z "$REGISTRATION_TOKEN" || "$REGISTRATION_TOKEN" == "null" ]]; then
 fi
 
 # Configure GitHub Actions Runner with the system hostname
-sudo -u ubuntu bash -c "cd $RUNNER_DIR && ./config.sh --url https://github.com/$GITHUB_ORGANIZATION --token $REGISTRATION_TOKEN --name \"$RUNNER\" --work _work --labels \"$RUNNER\" --unattended"
-
-# Install and start the runner service
 cd $RUNNER_DIR
-./svc.sh install
-./svc.sh start
+./config.sh --url https://github.com/$GITHUB_ORGANIZATION --token "$REGISTRATION_TOKEN" --name "$VM_NAME" --work _work --labels "$VM_NAME,aws,disposable" --unattended
+
+# Install the runner service (requires sudo)
+sudo ./svc.sh install
+
+# Start the runner service (requires sudo)
+sudo ./svc.sh start
 
 echo "GitHub Actions Runner setup complete for hostname: $RUNNER"

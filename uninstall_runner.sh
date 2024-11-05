@@ -3,9 +3,9 @@
 # Load configuration variables
 source "$(dirname "$0")/config.sh"
 
-# Ensure script runs with sudo privileges where necessary
-if [[ $EUID -ne 0 ]]; then
-    echo "Please run as root or with sudo privileges."
+# Ensure jq is installed for JSON parsing
+if ! command -v jq &> /dev/null; then
+    echo "jq is required but not installed. Please install jq and try again."
     exit 1
 fi
 
@@ -24,16 +24,16 @@ echo "Stopping the GitHub Actions Runner service..."
 cd $RUNNER_DIR
 ./svc.sh stop
 
-# Uninstall the runner service
+# Uninstall the runner service (requires sudo)
 echo "Uninstalling the GitHub Actions Runner service..."
-./svc.sh uninstall
+sudo ./svc.sh uninstall
 
 # Remove the runner from GitHub
 echo "Removing the GitHub Actions Runner from GitHub..."
 ./config.sh remove --token "$REMOVAL_TOKEN"
 
-# Remove the runner directory
+# Remove the runner directory (requires sudo for root-owned directory)
 echo "Removing GitHub Actions Runner directory..."
-rm -rf $RUNNER_DIR
+sudo rm -rf $RUNNER_DIR
 
-echo "GitHub Actions Runner uninstalled successfully."
+echo "GitHub Actions Runner uninstalled and removed from GitHub successfully."
