@@ -3,6 +3,9 @@
 # Load configuration variables
 source "$(dirname "$0")/runner_config.sh"
 
+# Get the hostname of the machine
+RUNNER=$(hostname)
+
 # Ensure script runs with sudo privileges where necessary
 if [[ $EUID -ne 0 ]]; then
     echo "Please run as root or with sudo privileges."
@@ -24,12 +27,12 @@ chown -R ubuntu:ubuntu $RUNNER_DIR
 # Fetch GitHub registration token
 REGISTRATION_TOKEN=$(curl -X POST -H "Authorization: Bearer $GITHUB_PAT" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/orgs/$GITHUB_ORGANIZATION/actions/runners/registration-token" | jq -r .token)
 
-# Configure GitHub Actions Runner
-sudo -u ubuntu bash -c "cd $RUNNER_DIR && ./config.sh --url https://github.com/$GITHUB_ORGANIZATION --token $REGISTRATION_TOKEN --name \"$VM_NAME\" --work _work --labels \"$VM_NAME,aws,disposable\" --unattended"
+# Configure GitHub Actions Runner with the system hostname
+sudo -u ubuntu bash -c "cd $RUNNER_DIR && ./config.sh --url https://github.com/$GITHUB_ORGANIZATION --token $REGISTRATION_TOKEN --name \"$RUNNER\" --work _work --labels \"$RUNNER\" --unattended"
 
 # Install and start the runner service
 cd $RUNNER_DIR
 ./svc.sh install
 ./svc.sh start
 
-echo "GitHub Actions Runner setup complete."
+echo "GitHub Actions Runner setup complete for hostname: $RUNNER"
