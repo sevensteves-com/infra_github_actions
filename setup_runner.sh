@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load configuration variables
-source "$(dirname "$0")/runner_config.sh"
+source "$(dirname "$0")/config.sh"
 
 # Get the hostname of the machine
 RUNNER=$(hostname)
