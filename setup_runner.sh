@@ -35,7 +35,7 @@ fi
 
 # Configure GitHub Actions Runner with the system hostname
 cd $RUNNER_DIR
-./config.sh --url https://github.com/$GITHUB_ORGANIZATION --token "$REGISTRATION_TOKEN" --name "$VM_NAME" --work _work --labels "$VM_NAME,aws,disposable" --unattended
+./config.sh --url https://github.com/$GITHUB_ORGANIZATION --token "$REGISTRATION_TOKEN" --name "$RUNNER" --work _work --labels "$RUNNER" --unattended
 
 # Install the runner service (requires sudo)
 sudo ./svc.sh install
