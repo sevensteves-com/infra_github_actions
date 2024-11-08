@@ -14,7 +14,7 @@ RUNNER=$(hostname)
 
 # Create actions-runner directory
 mkdir -p $RUNNER_DIR
-chown ubuntu:ubuntu $RUNNER_DIR
+chown $USER:$USER $RUNNER_DIR
 chmod 0755 $RUNNER_DIR
 
 # Download GitHub Actions Runner
@@ -22,7 +22,7 @@ curl -o $RUNNER_DIR/actions-runner.tar.gz -L "https://github.com/actions/runner/
 
 # Extract GitHub Actions Runner
 tar -xzf $RUNNER_DIR/actions-runner.tar.gz -C $RUNNER_DIR
-chown -R ubuntu:ubuntu $RUNNER_DIR
+chown -R $USER:$USER $RUNNER_DIR
 
 # Fetch GitHub registration token
 REGISTRATION_TOKEN=$(curl -X POST -H "Authorization: Bearer $GITHUB_PAT" -H "Accept: application/vnd.github+json" -H "X-GitHub-Api-Version: 2022-11-28" "https://api.github.com/orgs/$GITHUB_ORGANIZATION/actions/runners/registration-token" | jq -r .token)
