@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Load configuration variables
-source "$(dirname "$0")/config.sh"
+source "$(pwd)/config.sh"
 
 # Ensure jq is installed for JSON parsing
 if ! command -v jq &> /dev/null; then
